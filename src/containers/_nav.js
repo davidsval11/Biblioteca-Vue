@@ -6,35 +6,26 @@ export default [
         _name: 'CSidebarNavItem',
         name: 'Dashboard',
         to: '/dashboard',
-        icon: 'cil-speedometer',
-        badge: {
-          color: 'primary',
-          text: 'NEW'
-        }
+        icon: 'cil-speedometer'
       },
       {
         _name: 'CSidebarNavTitle',
         _children: ['Menu Principal']
       },
-      {
-        _name: 'CSidebarNavItem',
-        name: 'Colors',
-        to: '/theme/colors',
-        icon: 'cil-drop'
-      },
+      
       {
         _name: 'CSidebarNavDropdown',
-        name: 'Pages',
-        route: '/pages',
-        icon: 'cil-star',
+        name: 'Library',
+        route: '/library',
+        icon: 'cil-bank',
         items: [
           {
-            name: 'Login',
-            to: '/pages/login'
+            name: 'Books',
+            to: '/library/Books'
           },
           {
-            name: 'Register',
-            to: '/pages/register'
+            name: 'Reader',
+            to: '/library/Reader'
           },
         ]
       },
