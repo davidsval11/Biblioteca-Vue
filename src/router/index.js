@@ -6,17 +6,9 @@ const TheContainer = () => import('@/containers/TheContainer')
 
 // Views
 const Dashboard = () => import('@/views/Dashboard')
-
+const Books = () => import('@/views/library/Books')
+const Reader = () => import('@/views/library/Reader')
 const Colors = () => import('@/views/theme/Colors')
-
-const Charts = () => import('@/views/charts/Charts')
-
-
-
-// Views - Pages
-
-const Login = () => import('@/views/pages/Login')
-const Register = () => import('@/views/pages/Register')
 
 Vue.use(Router)
 
@@ -56,22 +48,22 @@ function configRoutes () {
           ]
         },
         {
-          path: '/pages',
-          redirect: '/pages/404',
-          name: 'Pages',
+          path: '/library',
+          redirect: '/library/Books',
+          name: 'Library',
           component: {
             render (c) { return c('router-view') }
           },
           children: [
             {
-              path: 'login',
-              name: 'Login',
-              component: Login
+              path: 'books',
+              name: 'books',
+              component: Books
             },
             {
-              path: 'register',
-              name: 'Register',
-              component: Register
+              path: 'reader',
+              name: 'reader',
+              component: Reader
             }
           ]
         }

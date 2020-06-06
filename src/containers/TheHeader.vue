@@ -15,19 +15,7 @@
     </CHeaderBrand>
     <CHeaderNav class="d-md-down-none mr-auto">
       <CHeaderNavItem class="px-3">
-        <CHeaderNavLink to="/dashboard">
-          Dashboard
-        </CHeaderNavLink>
-      </CHeaderNavItem>
-      <CHeaderNavItem class="px-3">
-        <CHeaderNavLink to="/users" exact>
-          Users
-        </CHeaderNavLink>
-      </CHeaderNavItem>
-      <CHeaderNavItem class="px-3">
-        <CHeaderNavLink>
-          Settings
-        </CHeaderNavLink>
+        
       </CHeaderNavItem>
     </CHeaderNav>
     <CHeaderNav class="mr-4">
