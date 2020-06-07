@@ -7,6 +7,7 @@ const TheContainer = () => import('@/containers/TheContainer')
 // Views
 const Dashboard = () => import('@/views/Dashboard')
 const Books = () => import('@/views/library/Books')
+const Loan = () => import('@/views/loan/Loan')
 const Reader = () => import('@/views/library/Reader')
 const Colors = () => import('@/views/theme/Colors')
 
@@ -64,6 +65,21 @@ function configRoutes () {
               path: 'reader',
               name: 'reader',
               component: Reader
+            }
+          ]
+        },
+        {
+          path: '/loan',
+          redirect: '/lona/Loan',
+          name: 'Library',
+          component: {
+            render (c) { return c('router-view') }
+          },
+          children: [
+            {
+              path: 'loan',
+              name: 'loan',
+              component: Loan
             }
           ]
         }
