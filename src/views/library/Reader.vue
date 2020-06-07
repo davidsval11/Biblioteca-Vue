@@ -4,7 +4,7 @@
       <CCard>
         <CCardHeader>
           <CIcon name="cil-people" />Readers
-          <CButton size="md" color="info" class="offset-10" @click="modalNewReader = true">
+          <CButton size="md" color="info" class="offset-10" @click="modalNewReader = true; actionReader = 1;">
             <CIcon name="cil-library-add" />New
           </CButton>
         </CCardHeader>
@@ -28,6 +28,11 @@
           sorter
           pagination
         >
+          <template #status="{item}">
+            <td>
+              <CBadge :color="getBadge(item.status)">{{item.status}}</CBadge>
+            </td>
+          </template>
           <template #show_details="{item, index}">
             <td class="py-2">
               <CButton
@@ -47,9 +52,8 @@
                   <p class="text-white m-0">Email: {{item.email}}</p>
                   <p class="text-white m-0">Phone: {{item.phone}}</p>
                   <p class="text-white m-0">Mobile: {{item.cell}}</p>
-
-                  <CButton size="sm" color="info" class>Edit</CButton>
-                  <CButton size="sm" color="danger" class="ml-1">Delete</CButton>
+                  <CButton size="sm" color="info" class @click="editReader(item)">Edit</CButton>
+                  <CButton size="sm" color="danger" class="ml-1" @click="destroyReader(item)">Delete</CButton>
                 </CMedia>
               </CCardBody>
             </CCollapse>
@@ -146,11 +150,11 @@
           </template>
           </CInput>
         </CCol>
+        <CCol :col="1">
+          <CBadge :color="getBadge(reader.status)">{{reader.status}}</CBadge>
+        </CCol>
       </CRow>
       <div slot="footer">
-        <CButton type="reset" color="danger" @click="reader = {}">
-          <CIcon name="cil-ban" />Reset
-        </CButton>
         <CButton type="submit" color="info" @click="addReader()">
           <CIcon name="cil-check-circle" />Submit
         </CButton>
@@ -165,6 +169,7 @@ export default {
   name: "readers",
   data() {
     return {
+      actionReader: 0,
       reader: {},
       details: [],
       collapseDuration: 0,
@@ -175,6 +180,7 @@ export default {
         { key: "name", label: "Name" },
         { key: "last_name", label: "Last Name" },
         { key: "address", label: "Address" },
+        { key: "status" },
         {
           key: "show_details",
           label: "",
@@ -195,16 +201,55 @@ export default {
       });
     },
 
-    addReader() {
-      axios.get(
-        this.ipback + "readers/store",
-       {
-        params: this.reader
+    getBadge (status) {
+      switch (status) {
+        case 'Active': return 'success'
+        case 'Inactive': return 'secondary'
+        case 'Lending': return 'warning'
+        case 'Undelivered': return 'danger'
+        default: 'primary'
       }
-      ).then(response => {
-        this.modalNewReader = false;
-        this.getReaders();
-      });
+    },
+
+    addReader() {
+      if (this.actionReader == 1) {
+        this.reader.status = "Active";
+        axios
+          .get(this.ipback + "readers/store", {
+            params: this.reader
+          })
+          .then(response => {
+            this.modalNewReader = false;
+            this.getReaders();
+          });
+      } else {
+        this.updateReader();
+      }
+    },
+
+    editReader(reader) {
+      this.actionReader = 2;
+      this.modalNewReader = true;
+      this.reader = reader;
+    },
+
+    updateReader() {
+      axios
+        .get(this.ipback + "readers/update", {
+          params: this.reader
+        })
+        .then(response => {
+          this.$swal({
+            position: "top-end",
+            icon: "success",
+            title: response.data.message,
+            showConfirmButton: false,
+            timer: 1500
+          });
+
+          this.modalNewReader = false;
+          this.getReaders();
+        });
     },
 
     getReaders() {
@@ -213,6 +258,38 @@ export default {
         return { ...item, i };
       });
     });
+    },
+
+    destroyReader(reader) {
+      this.reader = reader;
+      this.$swal({
+        title: "Esta seguro de eliminar el libro?",
+        text: "Esta accion no se puede revertir!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "Si, Eliminar!",
+        closeOnConfirm: true
+      }).then(result => {
+        if (result.value) {
+          axios
+            .get(this.ipback + "readers/destroy", {
+              params: this.reader
+            })
+            .then(response => {
+              this.$swal({
+                position: "top-end",
+                icon: "success",
+                title: response.data.message,
+                showConfirmButton: false,
+                timer: 1500
+              });
+
+              this.modalNewReader = false;
+              this.getReaders();
+            });
+        }
+      });
     }
   },
 

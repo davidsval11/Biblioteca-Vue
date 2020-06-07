@@ -10,7 +10,7 @@
             class="offset-10"
             @click="modalNewBook = true; actionBook = 1;"
           >
-            <CIcon name="cil-plus" />New
+            <CIcon name="cil-library-add" />New
           </CButton>
         </CCardHeader>
       </CCard>

@@ -21,12 +21,10 @@ export default [
         items: [
           {
             name: 'Books',
-            icon: 'cil-address-book',
             to: '/library/Books'
           },
           {
             name: 'Reader',
-            icon: 'cil-people',
             to: '/library/Reader'
           },
         ]
@@ -39,7 +37,6 @@ export default [
         items: [
           {
             name: 'Loan',
-            icon: 'cil-layers',
             to: '/loan/Loan'
           },
         ]
