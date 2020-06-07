@@ -65,7 +65,7 @@
       </CCardBody>
     </div>
 
-    <CModal title="Add Book" color="info" :show.sync="modalNewBook" size="lg" @ok="book.id = 1000">
+    <CModal title="Add Book" color="info" :show.sync="modalNewBook" size="lg">
       <CRow>
         <CCol :col="4">
           <CInput
@@ -204,7 +204,7 @@ export default {
       switch (status) {
         case 'Active': return 'success'
         case 'Inactive': return 'secondary'
-        case 'Lending': return 'warning'
+        case 'Loan': return 'warning'
         case 'Undelivered': return 'danger'
         default: 'primary'
       }
