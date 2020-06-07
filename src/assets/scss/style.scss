@@ -11,6 +11,8 @@
  
 @import '~sweetalert2/src/sweetalert2';
 
+@import "vue-select/src/scss/vue-select.scss";
+
 .card-header:not(.content-center) > .c-icon:first-child {
   margin-right: 0.1rem;
   margin-top: 0.1rem;
