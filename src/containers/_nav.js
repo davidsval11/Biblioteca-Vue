@@ -31,6 +31,19 @@ export default [
           },
         ]
       },
+      {
+        _name: 'CSidebarNavDropdown',
+        name: 'Loan Books',
+        route: '/loan',
+        icon: 'cil-calendar',
+        items: [
+          {
+            name: 'Loan',
+            icon: 'cil-layers',
+            to: '/loan/Loan'
+          },
+        ]
+      }
     ]
   }
 ]
