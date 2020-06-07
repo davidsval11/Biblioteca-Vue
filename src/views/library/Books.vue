@@ -3,9 +3,14 @@
     <div class="col-md-12">
       <CCard>
         <CCardHeader>
-          <CIcon name="cil-address-book" />Books
-          <CButton size="md" color="info" class="offset-10" @click="modalNewBook = true">
-            <CIcon name="cil-library-add" />New
+          <CIcon name="cil-bank" />Books
+          <CButton
+            size="md"
+            color="info"
+            class="offset-10"
+            @click="modalNewBook = true; actionBook = 1;"
+          >
+            <CIcon name="cil-plus" />New
           </CButton>
         </CCardHeader>
       </CCard>
@@ -28,6 +33,12 @@
           sorter
           pagination
         >
+          <template #status="{item}">
+            <td>
+              <CBadge :color="getBadge(item.status)">{{item.status}}</CBadge>
+            </td>
+          </template>
+
           <template #show_details="{item, index}">
             <td class="py-2">
               <CButton
@@ -41,14 +52,12 @@
           <template #details="{item}">
             <CCollapse :show="Boolean(item._toggled)" :duration="collapseDuration">
               <CCardBody>
-                <CMedia :aside-image-props="{ height: 102 }">
-                  <h4>{{item.title}}</h4>
-                  <p class="text-white m-0">Observations: {{item.obs}}</p>
-                  <p class="text-white m-0">Year: {{item.year}}</p>
-                  <p class="text-white m-0">pages: {{item.pages}}</p>
-                  <CButton size="sm" color="info" class>Edit</CButton>
-                  <CButton size="sm" color="danger" class="ml-1">Delete</CButton>
-                </CMedia>
+                <h4>{{item.title}}</h4>
+                <p class="text-white m-0">Observations: {{item.obs}}</p>
+                <p class="text-white m-0">Year: {{item.year}}</p>
+                <p class="text-white m-0">pages: {{item.pages}}</p>
+                <CButton size="sm" color="info" class @click="editBook(item)">Edit</CButton>
+                <CButton size="sm" color="danger" class="ml-2" @click="destroyBook(item)">Delete</CButton>
               </CCardBody>
             </CCollapse>
           </template>
@@ -129,16 +138,22 @@
             </template>
           </CInput>
         </CCol>
+        <CCol :col="1">
+          <CBadge :color="getBadge(book.status)">{{book.status}}</CBadge>
+        </CCol>
+        
       </CRow>
       <CRow>
         <CCol :col="12">
-          <CTextarea label="Observations" placeholder="observations..." rows="3" />
+          <CTextarea
+            label="Observations"
+            placeholder="observations..."
+            rows="3"
+            v-model="book.obs"
+          />
         </CCol>
       </CRow>
       <div slot="footer">
-        <CButton type="reset" color="danger" @click="book = {}">
-          <CIcon name="cil-ban" />Reset
-        </CButton>
         <CButton type="submit" color="info" @click="addBook()">
           <CIcon name="cil-check-circle" />Submit
         </CButton>
@@ -153,13 +168,14 @@ export default {
   name: "books",
   data() {
     return {
+      actionBook: 0,
       book: {},
       details: [],
       collapseDuration: 0,
       books: [],
       ipback: "http://25.19.174.176:88/",
       fields: [
-        { key: "id", label: "ISBN" },
+        { key: "isbn", label: "ISBN" },
         { key: "title", label: "Title" },
         { key: "genre" },
         { key: "author" },
@@ -184,25 +200,94 @@ export default {
         this.collapseDuration = 0;
       });
     },
-
-    addBook() {
-      axios.get(
-        this.ipback + "books/store",
-       {
-        params: this.book
+     getBadge (status) {
+      switch (status) {
+        case 'Active': return 'success'
+        case 'Inactive': return 'secondary'
+        case 'Lending': return 'warning'
+        case 'Undelivered': return 'danger'
+        default: 'primary'
       }
-      ).then(response => {
-        this.modalNewBook = false;
-        this.getBooks();
-      });
+    },
+    addBook() {
+      if (this.actionBook == 1) {
+        this.book.status = "Active";
+        axios
+          .get(this.ipback + "books/store", {
+            params: this.book
+          })
+          .then(response => {
+            this.modalNewBook = false;
+            this.getBooks();
+          });
+      } else {
+        this.updateBook();
+      }
+    },
+
+    editBook(book) {
+      this.actionBook = 2;
+      this.modalNewBook = true;
+      this.book = book;
+    },
+
+    updateBook() {
+      axios
+        .get(this.ipback + "books/update", {
+          params: this.book
+        })
+        .then(response => {
+          this.$swal({
+            position: "top-end",
+            icon: "success",
+            title: response.data.message,
+            showConfirmButton: false,
+            timer: 1500
+          });
+
+          this.modalNewBook = false;
+          this.getBooks();
+        });
     },
 
     getBooks() {
       axios.get(this.ipback + "books").then(response => {
-      this.books = response.data.books.map((item, id) => {
-        return { ...item, id };
+        this.books = response.data.books.map((item, id) => {
+          return { ...item, id };
+        });
       });
-    });
+    },
+
+    destroyBook(book) {
+      this.book = book;
+      this.$swal({
+        title: "Esta seguro de eliminar el libro?",
+        text: "Esta accion no se puede revertir!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "Si, Eliminar!",
+        closeOnConfirm: true
+      }).then(result => {
+        if (result.value) {
+          axios
+            .get(this.ipback + "books/destroy", {
+              params: this.book
+            })
+            .then(response => {
+              this.$swal({
+                position: "top-end",
+                icon: "success",
+                title: response.data.message,
+                showConfirmButton: false,
+                timer: 1500
+              });
+
+              this.modalNewBook = false;
+              this.getBooks();
+            });
+        }
+      });
     }
   },
 
