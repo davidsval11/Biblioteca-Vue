@@ -3,9 +3,9 @@
     <div class="col-md-12">
       <CCard>
         <CCardHeader>
-          <CIcon name="cil-bank" />Books
+          <CIcon name="cil-address-book" />Books
           <CButton size="md" color="info" class="offset-10" @click="modalNewBook = true">
-            <CIcon name="cil-plus" />New
+            <CIcon name="cil-library-add" />New
           </CButton>
         </CCardHeader>
       </CCard>
