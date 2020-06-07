@@ -186,9 +186,11 @@ export default {
     },
 
     addBook() {
-      axios.post(
-        this.ipback + "books",
-        this.book
+      axios.get(
+        this.ipback + "books/store",
+       {
+        params: this.book
+      }
       ).then(response => {
         this.modalNewBook = false;
         this.getBooks();
